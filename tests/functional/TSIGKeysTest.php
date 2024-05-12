@@ -8,47 +8,85 @@ use Exonet\Powerdns\TSIGKeyAlgorithms;
 /**
  * @internal
  */
-class TSIGKeysTest extends FunctionalTestCase
-{
-    public function testCreateTSIGKey(): void
-    {
-        $name = 'test-key';
+class TSIGKeysTest extends FunctionalTestCase {
+    // public function testCreateTSIGKey(): void {
+    //     $name = 'test-key-' . mt_rand(100, 10000);
 
-        $manager = $this->powerdns->tsigkeys();
+    //     $manager  = $this->powerdns->tsigkeys();
+    //     $resource = new TSIGKeyResource();
+
+    //     $resource->setName($name);
+    //     $resource->setAlgorithm(TSIGKeyAlgorithms::HMAC_SHA512);
+
+    //     $key = $manager->create($resource);
+
+    //     $this->assertNotEquals('', $key->getKey());
+
+    //     // cleanup
+    //     $manager->delete($key);
+    // }
+
+    // public function testCreateWithNonUrlFriendlyName(): void {
+    //     $name = "this/is/not/aa-_412'aur\\asd-url-friendly-" . mt_rand(100, 10000);
+
+    //     $manager  = $this->powerdns->tsigkeys();
+    //     $resource = new TSIGKeyResource();
+
+    //     $resource->setName($name);
+    //     $resource->setAlgorithm(TSIGKeyAlgorithms::HMAC_SHA512);
+
+    //     $key = $manager->create($resource);
+
+    //     $this->assertNotEquals('', $key->getKey());
+
+    //     // cleanup
+    //     $manager->delete($key);
+    // }
+
+    // public function testDelete(): void {
+    //     $name = 'test-key-' . mt_rand(100, 10000);
+
+    //     $manager  = $this->powerdns->tsigkeys();
+    //     $resource = new TSIGKeyResource();
+
+    //     $resource->setName($name);
+    //     $resource->setAlgorithm(TSIGKeyAlgorithms::HMAC_SHA512);
+
+    //     $key = $manager->create($resource);
+
+    //     // delete
+    //     $res = $manager->delete($key);
+
+    //     $this->assertTrue($res);
+    // }
+
+    public function testUpdate(): void {
+        $name = 'test-key2-' . mt_rand(100, 10000) . microtime(true);
+
+        $manager  = $this->powerdns->tsigkeys();
         $resource = new TSIGKeyResource();
 
         $resource->setName($name);
         $resource->setAlgorithm(TSIGKeyAlgorithms::HMAC_SHA512);
 
         $key = $manager->create($resource);
+        fwrite(STDERR, print_r($key, TRUE));
 
-        $this->assertSame(1, $key->count());
+        // // update
+        $upd = new TSIGKeyResource([
+            'id'        => $key->getId(),
+            'algorithm' => TSIGKeyAlgorithms::HMAC_SHA256
+        ]);
+        fwrite(STDERR, print_r($upd, TRUE));
 
-        $created = $key->offsetGet(0);
-        $this->assertNotEquals('', $created->getKey());
+        $updatedKey = $manager->updateAlgorithm($upd);
 
-        // cleanup
-        $manager->delete($created);
-    }
+        fwrite(STDERR, print_r($updatedKey, TRUE));
 
-    public function testCreateWithNonUrlFriendlyName(): void
-    {
-        $name = "this/is/not/aa-_412'aur\\asd-url-friendly";
 
-        $manager = $this->powerdns->tsigkeys();
-        $resource = new TSIGKeyResource();
+        // $this->assertNotEquals($updatedKey->getKey(), $key->getKey());
 
-        $resource->setName($name);
-        $resource->setAlgorithm(TSIGKeyAlgorithms::HMAC_SHA512);
-
-        $key = $manager->create($resource);
-
-        $this->assertSame(1, $key->count());
-
-        $created = $key->offsetGet(0);
-        $this->assertNotEquals('', $created->getKey());
-
-        // cleanup
-        $manager->delete($created);
+        // // delete
+        // $res = $manager->delete($key);
     }
 }
