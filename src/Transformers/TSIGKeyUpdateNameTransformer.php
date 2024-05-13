@@ -2,13 +2,13 @@
 
 namespace Exonet\Powerdns\Transformers;
 
-class TSIGKeyUpdateAlgorithmTransformer extends Transformer {
+class TSIGKeyUpdateNameTransformer extends Transformer {
     /**
      * {@inheritdoc}
      */
     public function transform() {
         return (object) [
-            'algorithm' => $this->data->getAlgorithm(),
+            'name' => $this->data->getName(),
         ];
     }
 }
